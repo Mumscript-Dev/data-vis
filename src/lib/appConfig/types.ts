@@ -14,4 +14,6 @@ type EntryData = {
 type Row = [string, number];
 type Data = Row[];
 
-export type { Country, EntryData, Data };
+type NumericCountryKey = 'population' | 'life_exp' | 'income';
+
+export type { Country, EntryData, Data, Row, NumericCountryKey };

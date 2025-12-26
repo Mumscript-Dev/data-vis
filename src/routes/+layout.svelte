@@ -103,7 +103,7 @@
 		</div>
 
 		<!-- MAIN CONTENT -->
-		<div class="flex flex-1 items-center justify-center overflow-hidden">
+		<div class="flex flex-1 flex-col overflow-hidden">
 			{@render children({ year, filteredData })}
 		</div>
 		<div class="mx-2 mb-2 flex shrink-0 flex-row justify-center gap-4 pt-2">
