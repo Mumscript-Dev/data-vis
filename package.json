@@ -43,5 +43,11 @@
 		"vite": "^7.2.6",
 		"vitest": "^4.0.15",
 		"vitest-browser-svelte": "^2.0.1"
+	},
+	"dependencies": {
+		"@types/d3": "^7.4.3",
+		"@types/topojson": "^3.2.6",
+		"d3": "^7.9.0",
+		"topojson": "^3.0.2"
 	}
 }

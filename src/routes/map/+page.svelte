@@ -1,5 +1,5 @@
 <script lang="ts">
-	let { year } = $props<{ year: number }>();
+	import { year } from '../state.svelte';
 </script>
 
-<h1>map Page for year {year}</h1>
+<h1>bar Page for year {year.value}</h1>

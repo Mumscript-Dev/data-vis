@@ -7,7 +7,7 @@ type Country = {
 };
 
 type EntryData = {
-	year: number;
+	year: string;
 	countries: Country[];
 };
 

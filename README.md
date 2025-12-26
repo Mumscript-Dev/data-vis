@@ -1,38 +1,67 @@
-# sv
+# Data Visualisation Project
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A dynamic web application that demonstrates the power of interactive data visualisations, showcasing the evolution of global socio-economic indicators over the past two centuries.
 
-## Creating a project
+## :computer: Live Demo
 
-If you're seeing this, you've probably already done this step. Congrats!
+[Check out the live project here](https://data-vis-with-d3.netlify.app/)
 
-```sh
-# create a new project in the current directory
-npx sv create
+---
 
-# create a new project in my-app
-npx sv create my-app
+## :page_facing_up: About
+
+Explore a compelling journey through **historical country-level data**. This website allows users to interactively examine the **GDP, life expectancy, and population** of countries over the last 200+ years.
+
+Through **immersive charts, scatterplots, bar graphs, beeswarm plots, and maps**, you can uncover trends, compare nations, and observe the rise and fall of economies, the impact of technological progress, and the transformations of societies across the globe.
+
+The project combines a **curated historical dataset** with modern web technologies, making it easy to identify patterns, correlations, and outliers while gaining insights into global development over time.
+
+---
+
+## :rocket: Technologies Used
+
+- **Frontend:** TypeScript + Svelte + SvelteKit
+- **Data Visualisation:** D3.js
+- **Styling:** Tailwind CSS + DaisyUI
+- **Deployment:** Netlify
+
+---
+
+## :sparkles: Features
+
+- Interactive timeline with **play, pause, reset, and slider controls**
+- Multiple visualisation types: **Map, Bar Chart, Scatterplot, Beeswarm**
+- Fully **responsive design**, optimized for desktop and mobile
+- Dynamic updates of visualizations when navigating between pages
+- Clean and reusable **Svelte 5 state management** for shared reactive data
+
+---
+
+## :bulb: Why This Project?
+
+This project showcases how **modern web technologies** can transform raw historical data into **meaningful and interactive insights**. It’s perfect for anyone interested in data storytelling, socio-economic history, or mastering Svelte + D3.js for real-world applications.
+
+---
+
+## :hammer_and_wrench: Getting Started
+
+Follow these steps to run the project locally:
+
+1. **Clone the repository:**
+
+```bash
+git clone https://github.com/Mumscript-Dev/data-vis
+cd data-vis
 ```
 
-## Developing
+2. **install depencies:**
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+```bash
+npm i
+```
 
-```sh
+3. **Run the program:**
+
+```bash
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
-
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.

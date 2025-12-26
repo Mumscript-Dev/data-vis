@@ -2,7 +2,7 @@
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import data from '$lib/data/data.json';
-
+	import { year } from './state.svelte';
 	type ChildProps = {
 		year: number;
 		filteredData: any;
@@ -12,10 +12,9 @@
 		children: (props: ChildProps) => any;
 	}>();
 
-	let year = $state(1800);
 	let years = $derived(data.map((row: any) => parseInt(row.year)));
 	let filteredData = $derived(data.find((row: any) => row.year === year.toString()));
-
+	$inspect(year.value, 'year in layout');
 	let interval: any;
 	let isRunning = false;
 	let drawerOpen = $state(false);
@@ -25,12 +24,12 @@
 
 		isRunning = true;
 		interval = setInterval(() => {
-			if (year < 2014) {
-				year++;
+			if (year.value < 2014) {
+				year.up();
 			} else {
 				clearInterval(interval);
 				isRunning = false;
-				year = 1800;
+				year.reset();
 			}
 		}, 200);
 	};
@@ -43,7 +42,7 @@
 	const resetYear = () => {
 		isRunning = false;
 		clearInterval(interval);
-		year = 1800;
+		year.reset();
 	};
 </script>
 
@@ -117,7 +116,7 @@
 				type="range"
 				min={Math.min(...years)}
 				max={Math.max(...years)}
-				bind:value={year}
+				bind:value={year.value}
 				class="range w-4/5 self-center text-blue-300 [--range-bg:orange] [--range-fill:0] [--range-thumb:blue]"
 			/>
 		</div>
