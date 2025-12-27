@@ -14,7 +14,7 @@
 
 	let years = $derived(data.map((row: any) => parseInt(row.year)));
 	let filteredData = $derived(data.find((row: any) => row.year === year.toString()));
-	$inspect(year.value, 'year in layout');
+
 	let interval: any;
 	let isRunning = false;
 	let drawerOpen = $state(false);
@@ -210,7 +210,7 @@
 				min={Math.min(...years)}
 				max={Math.max(...years)}
 				bind:value={year.value}
-				class="range w-4/5 self-center text-blue-300 [--range-bg:primary] [--range-fill:0] [--range-thumb:blue]"
+				class="range w-4/5 self-center text-blue-300 [--range-bg:blue-400] [--range-fill:0] [--range-thumb:blue-400]"
 			/>
 		</div>
 	</div>

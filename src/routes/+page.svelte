@@ -94,7 +94,7 @@
 					<th>Country</th>
 					<th>Continent</th>
 					{#each metrics as m}
-						<th class="cursor-pointer" on:click={() => toggleSort(m.key)}>
+						<th class="cursor-pointer" onclick={() => toggleSort(m.key)}>
 							<div class="flex items-center gap-1">
 								{m.label}
 								{#if sortKey === m.key}

@@ -12,8 +12,8 @@
 	};
 
 	let width = $state(800);
-	let height = $derived(100);
-	$inspect(width, 'width in bar page');
+	let height = $state(900);
+
 	let innerHeight = $derived(height - margin.top - margin.bottom - 30);
 	let innerWidth = $derived(width - margin.left - margin.right);
 
@@ -35,7 +35,7 @@
 		if (!year.filteredData) return [];
 		return getFilteredData(filter, year.filteredData);
 	});
-	$inspect(filteredData, 'filteredData in bar page');
+
 	const continents = ['americas', 'europe', 'asia', 'africa'];
 	let colors = $derived(d3.scaleOrdinal<string>().domain(continents).range(d3.schemeSet2));
 
