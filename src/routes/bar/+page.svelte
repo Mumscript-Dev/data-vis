@@ -14,7 +14,7 @@
 	let width = $state(800);
 	let height = $derived(100);
 	$inspect(width, 'width in bar page');
-	let innerHeight = $derived(height - margin.top - margin.bottom);
+	let innerHeight = $derived(height - margin.top - margin.bottom - 30);
 	let innerWidth = $derived(width - margin.left - margin.right);
 
 	const filterOptions = new Map<string, string>([
@@ -55,7 +55,7 @@
 </script>
 
 <header class="mt-2 flex shrink-0 flex-row gap-4 px-4">
-	<h3 class=" w-1/1 text-base font-semibold text-cyan-500 sm:text-lg">
+	<h3 class=" w-1/1 text-base font-semibold text-primary sm:text-lg">
 		Top 20 countries in {year.value}
 	</h3>
 
