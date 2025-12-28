@@ -7,7 +7,9 @@
 
 <div class="tooltip" style="position: absolute; top: {yPosition}px; left: {xPosition}px;">
 	<h5 class="text-md mb-1 font-semibold text-blue-600">{data.country}</h5>
-	<p class="mb-0.5 text-sm text-gray-500">Continent: {data.continent}</p>
+	<p class="mb-0.5 text-sm text-gray-500">
+		Continent: {data.continent.charAt(0).toUpperCase() + data.continent.slice(1)}
+	</p>
 	{#if data.population !== null}
 		<p class="mb-0.5 text-sm text-gray-500">Population: {data.population}</p>
 	{/if}

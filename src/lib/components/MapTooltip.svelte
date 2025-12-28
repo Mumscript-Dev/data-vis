@@ -10,7 +10,9 @@
 	style="top: {yPosition}px; left: {xPosition}px;"
 >
 	<h5 class="text-md mb-1 font-semibold text-blue-600">{country.country}</h5>
-	<p class="mb-0.5 text-sm text-gray-500">Continent: {country.continent}</p>
+	<p class="mb-0.5 text-sm text-gray-500">
+		Continent: {country.continent.charAt(0).toUpperCase() + country.continent.slice(1)}
+	</p>
 	{#if country.life_exp !== null}
 		<p class="mb-0.5 text-sm text-gray-500">Life Expectancy: {country.life_exp} yrs</p>
 	{/if}

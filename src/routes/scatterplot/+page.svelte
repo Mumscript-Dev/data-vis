@@ -3,7 +3,7 @@
 	import * as d3 from 'd3';
 
 	import type { Country } from '$lib/appConfig/types';
-	import ScatterX from '$lib/components/ScatterX.svelte';
+	import AxisX from '$lib/components/AxisX.svelte';
 	import ScatterY from '$lib/components/ScatterY.svelte';
 	import ScatterTooltip from '$lib/components/ScatterTooltip.svelte';
 
@@ -111,7 +111,7 @@
 					{/if}
 				{/each}
 			{/if}
-			<ScatterX {xScale} {innerWidth} {innerHeight} {xTicks} {labelColor} />
+			<AxisX {xScale} {innerWidth} {innerHeight} {xTicks} {labelColor} />
 			<ScatterY {yScale} {innerHeight} {yTicks} {labelColor} {width} />
 		</g>
 		<text
