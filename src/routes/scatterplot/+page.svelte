@@ -6,6 +6,7 @@
 	import AxisX from '$lib/components/AxisX.svelte';
 	import ScatterY from '$lib/components/ScatterY.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
+	import { createChartHover } from '$lib/store/chartHover';
 
 	let width = $state(800);
 	let height = $state(900);
@@ -48,20 +49,14 @@
 	};
 
 	const resetContinentFilter = () => (continentFilter = null);
-	let hoveredData: Country | null = $state(null);
-	const handleChartHover = (data: Country) => {
-		hoveredData = data;
-	};
 
-	const handleLeaveChart = () => {
-		hoveredData = null;
-	};
-
-	let mousePointWithMarginOffset = { x: 0, y: 0 };
-	const handleMouseCoord = (event: any) => {
-		mousePointWithMarginOffset.x = event.pageX - margin.left - margin.right;
-		mousePointWithMarginOffset.y = event.pageY - margin.top - margin.bottom;
-	};
+	const {
+		hoveredData,
+		mousePointWithMarginOffset,
+		handleChartHover,
+		handleLeaveChart,
+		handleMouseCoord
+	} = createChartHover<Country>();
 </script>
 
 <div class="mt-4 flex flex-wrap justify-center gap-2">
@@ -77,13 +72,15 @@
 
 	<button class="btn btn-outline btn-sm" onclick={resetContinentFilter}> Reset </button>
 </div>
+
 <div
 	bind:clientWidth={width}
 	bind:clientHeight={height}
-	onmousemove={handleMouseCoord}
+	onmousemove={(e) => handleMouseCoord(e, margin)}
 	class="flex h-full w-full p-2"
 	role="region"
-	aria-label="Scatterplot chart showing countries by life expectancy and GDP per capita"
+	aria-label="Scatterplot chart showing countries by
+	life expectancy and GDP per capita"
 >
 	<svg {width} {height}>
 		<g transform="translate({margin.left}, {margin.top})">
@@ -105,7 +102,7 @@
 							cx={xScale(row.income)}
 							onmouseover={() => handleChartHover(row)}
 							onfocus={() => handleChartHover(row)}
-							onmouseleave={() => handleLeaveChart()}
+							onmouseleave={handleLeaveChart}
 							tabIndex="0"
 							role="graphics-symbol"
 						/>
@@ -132,11 +129,11 @@
 	</svg>
 </div>
 
-{#if hoveredData}
+{#if hoveredData && $hoveredData}
 	<Tooltip
-		data={hoveredData}
-		xPosition={mousePointWithMarginOffset.x}
-		yPosition={mousePointWithMarginOffset.y}
+		data={$hoveredData}
+		xPosition={$mousePointWithMarginOffset.x}
+		yPosition={$mousePointWithMarginOffset.y}
 	/>
 {/if}
 

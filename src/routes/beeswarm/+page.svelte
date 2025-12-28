@@ -6,6 +6,7 @@
 	import Tooltip from '$lib/components/Tooltip.svelte';
 	import AxisX from '$lib/components/AxisX.svelte';
 	import BeeSwarmY from '$lib/components/BeeSwarmY.svelte';
+	import { createChartHover } from '$lib/store/chartHover';
 
 	type CountryNode = Country & SimulationNodeDatum;
 
@@ -116,19 +117,13 @@
 			.restart();
 	});
 
-	let hoveredData: Country | null = $state(null);
-	const handleChartHover = (data: Country) => {
-		hoveredData = data;
-	};
-	const handleLeaveChart = () => {
-		hoveredData = null;
-	};
-
-	let mousePointWithMarginOffset = { x: 0, y: 0 };
-	const handleMouseCoord = (event: MouseEvent) => {
-		mousePointWithMarginOffset.x = event.pageX - margin.left - margin.right;
-		mousePointWithMarginOffset.y = event.pageY - margin.top - margin.bottom;
-	};
+	const {
+		hoveredData,
+		mousePointWithMarginOffset,
+		handleChartHover,
+		handleLeaveChart,
+		handleMouseCoord
+	} = createChartHover<Country>();
 </script>
 
 <div class="mt-4 flex flex-wrap justify-center gap-2">
@@ -152,7 +147,7 @@
 <div
 	bind:clientWidth={width}
 	bind:clientHeight={height}
-	onmousemove={handleMouseCoord}
+	onmousemove={(e) => handleMouseCoord(e, margin)}
 	class="flex h-full w-full p-2"
 	role="region"
 	aria-label="Beeswarm chart showing countries by life expectancy and GDP per capita"
@@ -211,11 +206,11 @@
 	</svg>
 </div>
 
-{#if hoveredData}
+{#if hoveredData && $hoveredData}
 	<Tooltip
-		data={hoveredData}
-		xPosition={mousePointWithMarginOffset.x}
-		yPosition={mousePointWithMarginOffset.y}
+		data={$hoveredData}
+		xPosition={$mousePointWithMarginOffset.x}
+		yPosition={$mousePointWithMarginOffset.y}
 	/>
 {/if}
 

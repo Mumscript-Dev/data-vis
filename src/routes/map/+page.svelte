@@ -6,6 +6,7 @@
 	import { year } from '../state.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
 	import type { GeoPath, GeoPermissibleObjects } from 'd3-geo';
+	import { createChartHover } from '$lib/store/chartHover'; // <- reusable hover module
 
 	const { data } = $props<{
 		data: {
@@ -20,8 +21,6 @@
 	let isDragging = $state(false);
 	let degreePerFrame = 0.4;
 	let globe: any;
-
-	const countriesGeo = data.countriesGeo;
 
 	let innerHeight = $derived(height - margin.top - margin.bottom - 30);
 	let innerWidth = $derived(width - margin.left - margin.right);
@@ -50,31 +49,34 @@
 					isDragging = true;
 					rotation = rotation + event.dx * dragSensitivity;
 				})
-				.on('end', (event) => {
+				.on('end', () => {
 					isDragging = false;
 				})
 		);
+
 		const timer = d3.timer(() => {
 			if (!isDragging) rotation += degreePerFrame;
 		});
 
 		return () => timer.stop();
 	});
-	let hoveredCountry: null | Country = $state(null);
-	function getCountryInfo(country: string, data: Country[]) {
-		console.log(data.find((d) => d.country === country));
-		return data.find((d) => d.country === country) || null;
+
+	const {
+		hoveredData,
+		mousePointWithMarginOffset,
+		handleChartHover,
+		handleLeaveChart,
+		handleMouseCoord
+	} = createChartHover<Country>();
+
+	function getCountryInfo(name: string): Country | null {
+		const countries = year?.filteredData?.countries ?? [];
+		return countries.find((d) => d.country === name) || null;
 	}
-	let handleCircleHover = (country: string, data: Country[]) => {
-		hoveredCountry = getCountryInfo(country, data);
-	};
-	const handleLeaveChart = () => {
-		hoveredCountry = null;
-	};
-	let mousePointWithMarginOffset = $state({ x: 0, y: 0 });
-	function handleMouseCoord(event: any) {
-		mousePointWithMarginOffset.x = event.pageX - margin.left - margin.right;
-		mousePointWithMarginOffset.y = event.pageY - margin.top - margin.bottom;
+
+	function handleCountryHover(name: string) {
+		const country = getCountryInfo(name);
+		if (country) handleChartHover(country);
 	}
 </script>
 
@@ -84,10 +86,11 @@
 		Year: {year?.value ?? 'N/A'}
 	</span>
 </div>
+
 <div
 	bind:clientWidth={width}
 	bind:clientHeight={height}
-	onmousemove={handleMouseCoord}
+	onmousemove={(e) => handleMouseCoord(e, margin)}
 	class="h-full w-full p-2"
 	role="region"
 	aria-label="Interactive world map"
@@ -99,7 +102,10 @@
 				<feOffset dx="0" dy="0" result="offsetblur" />
 				<feFlood flood-color="rgba(173, 216, 230, .85)" />
 				<feComposite in2="offsetblur" operator="in" />
-				<feMerge> <feMergeNode /> <feMergeNode in="SourceGraphic" /> </feMerge>
+				<feMerge>
+					<feMergeNode />
+					<feMergeNode in="SourceGraphic" />
+				</feMerge>
 			</filter>
 		</defs>
 		<g transform="translate({margin.left}, {margin.top})">
@@ -111,18 +117,17 @@
 				stroke="grey"
 				fill="lightblue"
 			></circle>
-			{#if countriesGeo && path}
-				{#each countriesGeo as country}
+
+			{#if data?.countriesGeo && path}
+				{#each data.countriesGeo as country}
 					<path
 						d={path(country)}
 						class="countries"
 						stroke="#787878"
 						fill={country.properties.color}
-						onmouseover={() =>
-							handleCircleHover(country.properties.name, year?.filteredData?.countries ?? [])}
-						onfocus={() =>
-							handleCircleHover(country.properties.name, year?.filteredData?.countries ?? [])}
-						onmouseleave={() => handleLeaveChart()}
+						onmouseover={() => handleCountryHover(country.properties.name)}
+						onfocus={() => handleCountryHover(country.properties.name)}
+						onmouseleave={handleLeaveChart}
 						role="graphics-symbol"
 						opacity={0.5}
 					/>
@@ -132,10 +137,10 @@
 	</svg>
 </div>
 
-{#if hoveredCountry}
+{#if hoveredData && $hoveredData}
 	<Tooltip
-		data={hoveredCountry}
-		xPosition={mousePointWithMarginOffset.x}
-		yPosition={mousePointWithMarginOffset.y}
+		data={$hoveredData}
+		xPosition={$mousePointWithMarginOffset.x}
+		yPosition={$mousePointWithMarginOffset.y}
 	/>
 {/if}
