@@ -1,12 +1,17 @@
 <script lang="ts">
 	import * as d3 from 'd3';
 	import { onMount } from 'svelte';
-	import world from '$lib/data/world';
-	import * as topojson from 'topojson';
+	import type { Feature, Geometry } from 'geojson';
 	import type { Country } from '$lib/appConfig/types';
 	import { year } from '../state.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
 	import type { GeoPath, GeoPermissibleObjects } from 'd3-geo';
+
+	const { data } = $props<{
+		data: {
+			countriesGeo: Feature<Geometry, { name: string; color?: string }>[];
+		};
+	}>();
 
 	const margin = { top: 20, bottom: 20, left: 20, right: 20 };
 	let width = $state(800);
@@ -15,7 +20,7 @@
 	let isDragging = $state(false);
 	let degreePerFrame = 0.4;
 	let globe: any;
-	let countriesGeo = $derived(topojson.feature(world, world.objects.countries).features);
+	let countriesGeo = $derived(data.countriesGeo);
 	let innerHeight = $derived(height - margin.top - margin.bottom - 30);
 	let innerWidth = $derived(width - margin.left - margin.right);
 	const continents = ['americas', 'europe', 'asia', 'africa'];
