@@ -9,6 +9,7 @@
 
 	let width = $state(800);
 	let height = $state(900);
+
 	let margin = $derived({
 		top: 20,
 		bottom: 120,
@@ -16,36 +17,36 @@
 		right: width < 640 ? 20 : 80
 	});
 	const labelColor = '#55bcd9';
+	let continentFilter: string | null = $state(null);
+
 	let innerHeight = $derived(height - margin.top - margin.bottom);
 	let innerWidth = $derived(width - margin.left - margin.right);
 	let xLableOffset = $derived(width < 640 ? 10 : 40);
-	let data = $derived(year.filteredData?.countries || []);
+
+	let data = $derived.by(() => {
+		const countries = year.filteredData?.countries || [];
+		if (!continentFilter) return countries;
+
+		return countries.filter((country) => country.continent.toLowerCase() === continentFilter);
+	});
+
 	const continents = ['americas', 'europe', 'asia', 'africa'];
 
 	const yTicks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90];
 	const xTicks = [140, 400, 4000, 40000, 170000];
 	const populationDomain = [2000, 1400000000];
+
 	let xScale = $derived(d3.scaleLog().base(10).domain([140, 170000]).range([0, innerWidth]));
 	let yScale = $derived(d3.scaleLinear().domain([0, 90]).range([innerHeight, 0]));
+
 	let colors = $derived(d3.scaleOrdinal<string>().domain(continents).range(d3.schemeSet2));
 
 	let area = $derived(d3.scaleSqrt().domain(populationDomain).range([50, 2500]));
 
-	let continentFilter: string | null = $state(null);
 	const filterContinent = (continent: string) => {
 		continentFilter = continent;
 	};
 
-	$effect(() => {
-		if (continentFilter) {
-			data =
-				year.filteredData?.countries.filter(
-					(country) => country.continent.toLowerCase() === continentFilter
-				) || [];
-		} else {
-			data = year.filteredData?.countries || [];
-		}
-	});
 	const resetContinentFilter = () => (continentFilter = null);
 	let hoveredData: Country | null = $state(null);
 	const handleChartHover = (data: Country) => {
@@ -106,7 +107,7 @@
 							onfocus={() => handleChartHover(row)}
 							onmouseleave={() => handleLeaveChart()}
 							tabIndex="0"
-							role="tooltip"
+							role="graphics-symbol"
 						/>
 					{/if}
 				{/each}

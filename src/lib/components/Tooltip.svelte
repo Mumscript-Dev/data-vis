@@ -19,4 +19,7 @@
 	{#if data.income !== null}
 		<p class="text-sm text-gray-500">GDP Per Capita: ${data.income}</p>
 	{/if}
+	{#if data.population !== null}
+		<p class="text-sm text-gray-500">Population: ${data.population}</p>
+	{/if}
 </div>

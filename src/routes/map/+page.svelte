@@ -20,29 +20,27 @@
 	let isDragging = $state(false);
 	let degreePerFrame = 0.4;
 	let globe: any;
-	let countriesGeo = $derived(data.countriesGeo);
+
+	const countriesGeo = data.countriesGeo;
+
 	let innerHeight = $derived(height - margin.top - margin.bottom - 30);
 	let innerWidth = $derived(width - margin.left - margin.right);
-	const continents = ['americas', 'europe', 'asia', 'africa'];
+
 	let globeWidth = $derived(innerWidth > innerHeight ? innerHeight / 2 : innerWidth / 2);
 
-	const t = d3.timer((elapsed) => {
-		if (isDragging) return;
-		rotation += degreePerFrame;
-	});
-	let projection;
 	let path = $state<GeoPath<any, GeoPermissibleObjects> | null>(null);
+	let projection = d3.geoOrthographic();
 
 	$effect(() => {
-		projection = d3
-			.geoOrthographic()
+		projection
 			.scale(globeWidth)
 			.rotate([rotation, 0])
 			.translate([innerWidth / 2, innerHeight / 2]);
+
 		path = d3.geoPath(projection);
 	});
 
-	onMount(async () => {
+	onMount(() => {
 		const dragSensitivity = 0.15;
 		const myGlobe = d3.select(globe);
 		myGlobe.call(
@@ -56,15 +54,20 @@
 					isDragging = false;
 				})
 		);
+		const timer = d3.timer(() => {
+			if (!isDragging) rotation += degreePerFrame;
+		});
+
+		return () => timer.stop();
 	});
 	let hoveredCountry: null | Country = $state(null);
 	function getCountryInfo(country: string, data: Country[]) {
 		console.log(data.find((d) => d.country === country));
 		return data.find((d) => d.country === country) || null;
 	}
-	let handleCircleHover = $derived((country: string, data: Country[]) => {
+	let handleCircleHover = (country: string, data: Country[]) => {
 		hoveredCountry = getCountryInfo(country, data);
-	});
+	};
 	const handleLeaveChart = () => {
 		hoveredCountry = null;
 	};
@@ -120,7 +123,7 @@
 						onfocus={() =>
 							handleCircleHover(country.properties.name, year?.filteredData?.countries ?? [])}
 						onmouseleave={() => handleLeaveChart()}
-						role="tooltip"
+						role="graphics-symbol"
 						opacity={0.5}
 					/>
 				{/each}

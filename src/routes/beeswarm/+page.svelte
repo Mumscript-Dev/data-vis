@@ -68,20 +68,22 @@
 			}
 		}
 	});
-
-	let simulation = $derived(d3.forceSimulation<CountryNode>(data));
+	let simulation = d3.forceSimulation<CountryNode>();
 	let nodes = $state<CountryNode[]>([]);
 
 	$effect(() => {
-		simulation.on('tick', () => {
-			nodes = simulation.nodes();
+		simulation.nodes(data);
+		simulation.alpha(1).restart();
+	});
 
-			for (const n of nodes) {
-				if (n.x != null && n.y != null) {
-					positionCache.set(n.country, { x: n.x, y: n.y });
-				}
+	simulation.on('tick', () => {
+		nodes = simulation.nodes();
+
+		for (const n of nodes) {
+			if (n.x != null && n.y != null) {
+				positionCache.set(n.country, { x: n.x, y: n.y });
 			}
-		});
+		}
 	});
 
 	$effect(() => {
@@ -179,7 +181,7 @@
 						onfocus={() => handleChartHover(node)}
 						onmouseleave={handleLeaveChart}
 						tabIndex="0"
-						role="tooltip"
+						role="graphics-symbol"
 					/>
 				{/if}
 			{/each}
