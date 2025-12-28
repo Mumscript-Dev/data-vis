@@ -3,7 +3,7 @@
 	import * as d3 from 'd3';
 	import type { SimulationNodeDatum } from 'd3-force';
 	import type { Country } from '$lib/appConfig/types';
-	import ScatterTooltip from '$lib/components/ScatterTooltip.svelte';
+	import Tooltip from '$lib/components/Tooltip.svelte';
 	import AxisX from '$lib/components/AxisX.svelte';
 	import BeeSwarmY from '$lib/components/BeeSwarmY.svelte';
 
@@ -210,7 +210,7 @@
 </div>
 
 {#if hoveredData}
-	<ScatterTooltip
+	<Tooltip
 		data={hoveredData}
 		xPosition={mousePointWithMarginOffset.x}
 		yPosition={mousePointWithMarginOffset.y}

@@ -5,7 +5,7 @@
 	import type { Country } from '$lib/appConfig/types';
 	import AxisX from '$lib/components/AxisX.svelte';
 	import ScatterY from '$lib/components/ScatterY.svelte';
-	import ScatterTooltip from '$lib/components/ScatterTooltip.svelte';
+	import Tooltip from '$lib/components/Tooltip.svelte';
 
 	let width = $state(800);
 	let height = $state(900);
@@ -132,7 +132,7 @@
 </div>
 
 {#if hoveredData}
-	<ScatterTooltip
+	<Tooltip
 		data={hoveredData}
 		xPosition={mousePointWithMarginOffset.x}
 		yPosition={mousePointWithMarginOffset.y}

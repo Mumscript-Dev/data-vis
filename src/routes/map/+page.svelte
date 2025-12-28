@@ -5,7 +5,7 @@
 	import * as topojson from 'topojson';
 	import type { Country } from '$lib/appConfig/types';
 	import { year } from '../state.svelte';
-	import MapTooltip from '$lib/components/MapTooltip.svelte';
+	import Tooltip from '$lib/components/Tooltip.svelte';
 	import type { GeoPath, GeoPermissibleObjects } from 'd3-geo';
 
 	const margin = { top: 20, bottom: 20, left: 20, right: 20 };
@@ -125,8 +125,8 @@
 </div>
 
 {#if hoveredCountry}
-	<MapTooltip
-		country={hoveredCountry}
+	<Tooltip
+		data={hoveredCountry}
 		xPosition={mousePointWithMarginOffset.x}
 		yPosition={mousePointWithMarginOffset.y}
 	/>
