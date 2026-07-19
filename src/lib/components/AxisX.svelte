@@ -1,5 +1,7 @@
 <script lang="ts">
-	export let xScale: any;
+	import type { ScaleContinuousNumeric } from 'd3-scale';
+
+	export let xScale: ScaleContinuousNumeric<number, number>;
 	export let innerWidth: number;
 	export let innerHeight: number;
 	export let xTicks: number[];

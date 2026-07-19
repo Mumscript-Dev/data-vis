@@ -1,4 +1,7 @@
-const world = {
+import type { GeometryCollection, Topology } from 'topojson-specification';
+import type { CountryGeoProperties } from '$lib/appConfig/types';
+
+const world: Topology<{ countries: GeometryCollection<CountryGeoProperties> }> = {
 	type: 'Topology',
 	transform: {
 		scale: [0.002906483881124809, 0.0016008570112434413],

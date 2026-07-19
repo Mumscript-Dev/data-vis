@@ -3,38 +3,43 @@
 	import * as d3 from 'd3';
 	import type { SimulationNodeDatum } from 'd3-force';
 	import type { Country } from '$lib/appConfig/types';
-	import Tooltip from '$lib/components/Tooltip.svelte';
 	import AxisX from '$lib/components/AxisX.svelte';
 	import BeeSwarmY from '$lib/components/BeeSwarmY.svelte';
+	import YearWatermark from '$lib/components/YearWatermark.svelte';
+	import ChartTooltip from '$lib/components/ChartTooltip.svelte';
 	import { createChartHover } from '$lib/store/chartHover';
+	import { continentColor } from '$lib/helpers/continentColor';
+	import {
+		CONTINENTS,
+		LABEL_COLOR,
+		GDP_DOMAIN,
+		GDP_TICKS,
+		LIFE_EXP_DOMAIN,
+		LIFE_EXP_TICKS,
+		responsiveChartMargin,
+		xLabelOffset
+	} from '$lib/appConfig/chartConfig';
 
 	type CountryNode = Country & SimulationNodeDatum;
 
 	let width = $state(800);
 	let height = $state(900);
-	let margin = $derived({
-		top: 20,
-		bottom: 120,
-		left: width < 640 ? 20 : 80,
-		right: width < 640 ? 20 : 80
-	});
+	let margin = $derived(responsiveChartMargin(width));
 
-	const labelColor = '#55bcd9';
+	const labelColor = LABEL_COLOR;
 	let innerHeight = $derived(height - margin.top - margin.bottom);
 	let innerWidth = $derived(width - margin.left - margin.right);
-	let xLableOffset = $derived(width < 640 ? 10 : 40);
+	let xLableOffset = $derived(xLabelOffset(width));
 
 	let metric = $state<'GDP Per Capita ($)' | 'Life Expectancy (Years)'>('GDP Per Capita ($)');
 	let data = $derived<CountryNode[]>(year.filteredData?.countries ?? []);
 
-	const continents = ['americas', 'europe', 'asia', 'africa'];
-
-	let color = $derived(d3.scaleOrdinal<string>().domain(continents).range(d3.schemeSet2));
+	const continents = CONTINENTS;
 
 	let xScale = $derived(
 		metric === 'GDP Per Capita ($)'
-			? d3.scaleLog().base(10).domain([140, 170000]).range([0, innerWidth])
-			: d3.scaleLinear().domain([0, 90]).range([0, innerWidth])
+			? d3.scaleLog().base(10).domain(GDP_DOMAIN).range([0, innerWidth])
+			: d3.scaleLinear().domain(LIFE_EXP_DOMAIN).range([0, innerWidth])
 	);
 
 	let yScale = $derived(
@@ -45,11 +50,7 @@
 		metric = newMetric;
 	};
 
-	const xTicks = $derived(
-		metric === 'GDP Per Capita ($)'
-			? [140, 400, 4000, 40000, 170000]
-			: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90]
-	);
+	const xTicks = $derived(metric === 'GDP Per Capita ($)' ? GDP_TICKS : LIFE_EXP_TICKS);
 
 	const RADIUS = 10;
 
@@ -154,16 +155,7 @@
 >
 	<svg {width} {height}>
 		<g transform="translate({margin.left}, {margin.top})">
-			<text
-				x={innerWidth / 2}
-				y={(innerHeight * 2) / 3}
-				text-anchor="middle"
-				class="opacity-50"
-				stroke="lightgray"
-				style="font-size: {innerWidth / 3}; fill: lightgray"
-			>
-				{year.value}
-			</text>
+			<YearWatermark year={year.value} {innerWidth} {innerHeight} />
 
 			{#each nodes as node}
 				{#if node.income != null && node.life_exp != null}
@@ -171,7 +163,7 @@
 						cx={node.x}
 						cy={node.y}
 						r={RADIUS}
-						fill={color(node.continent)}
+						fill={continentColor(node.continent)}
 						onmouseover={() => handleChartHover(node)}
 						onfocus={() => handleChartHover(node)}
 						onmouseleave={handleLeaveChart}
@@ -206,13 +198,7 @@
 	</svg>
 </div>
 
-{#if hoveredData && $hoveredData}
-	<Tooltip
-		data={$hoveredData}
-		xPosition={$mousePointWithMarginOffset.x}
-		yPosition={$mousePointWithMarginOffset.y}
-	/>
-{/if}
+<ChartTooltip {hoveredData} {mousePointWithMarginOffset} />
 
 <style>
 	.yMeasure {

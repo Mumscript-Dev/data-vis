@@ -16,4 +16,9 @@ type Data = Row[];
 
 type NumericCountryKey = 'population' | 'life_exp' | 'income';
 
-export type { Country, EntryData, Data, Row, NumericCountryKey };
+type CountryGeoProperties = {
+	name: string;
+	color?: string;
+};
+
+export type { Country, EntryData, Data, Row, NumericCountryKey, CountryGeoProperties };

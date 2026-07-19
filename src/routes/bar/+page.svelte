@@ -2,6 +2,8 @@
 	import { year } from '../state.svelte';
 	import type { Country, EntryData, NumericCountryKey } from '$lib/appConfig/types';
 	import { hasNumericValue } from '$lib/helpers/typeGuard';
+	import { continentColor } from '$lib/helpers/continentColor';
+	import { GDP_LOG_DOMAIN, LIFE_EXP_DOMAIN, POPULATION_DOMAIN } from '$lib/appConfig/chartConfig';
 	import * as d3 from 'd3';
 
 	const margin = {
@@ -36,9 +38,6 @@
 		return getFilteredData(filter, year.filteredData);
 	});
 
-	const continents = ['americas', 'europe', 'asia', 'africa'];
-	let colors = $derived(d3.scaleOrdinal<string>().domain(continents).range(d3.schemeSet2));
-
 	let yDomain = $derived(filteredData.map((row) => row.country));
 	let yScale = $derived(
 		d3.scaleBand().domain(yDomain).range([0, innerHeight]).paddingInner(0.1).paddingOuter(0.2)
@@ -46,9 +45,10 @@
 
 	const getXScale = (filter: string, innerWidth: number) => {
 		if (filter === 'population')
-			return d3.scaleLinear().domain([2000, 1_400_000_000]).range([0, innerWidth]);
-		if (filter === 'life_exp') return d3.scaleLinear().domain([0, 90]).range([0, innerWidth]);
-		return d3.scaleLog().base(10).domain([1400, 150000]).range([0, innerWidth]);
+			return d3.scaleLinear().domain(POPULATION_DOMAIN).range([0, innerWidth]);
+		if (filter === 'life_exp')
+			return d3.scaleLinear().domain(LIFE_EXP_DOMAIN).range([0, innerWidth]);
+		return d3.scaleLog().base(10).domain(GDP_LOG_DOMAIN).range([0, innerWidth]);
 	};
 
 	let xScale = $derived(getXScale(filter, innerWidth));
@@ -77,14 +77,14 @@
 						y={yScale(row.country)}
 						width={xScale(row[filter]!)}
 						height={yScale.bandwidth()}
-						fill={colors(row.continent)}
+						fill={continentColor(row.continent)}
 					/>
 					<text
 						x={xScale(row[filter]!) + 5}
 						y={yScale(row.country)! + yScale.bandwidth() / 2}
 						dominant-baseline="middle"
 						font-size="12"
-						fill={colors(row.continent)}
+						fill={continentColor(row.continent)}
 						stroke="hsl(var(--bc))"
 						stroke-width="0.2"
 					>

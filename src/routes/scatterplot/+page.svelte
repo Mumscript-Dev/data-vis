@@ -5,24 +5,32 @@
 	import type { Country } from '$lib/appConfig/types';
 	import AxisX from '$lib/components/AxisX.svelte';
 	import ScatterY from '$lib/components/ScatterY.svelte';
-	import Tooltip from '$lib/components/Tooltip.svelte';
+	import YearWatermark from '$lib/components/YearWatermark.svelte';
+	import ChartTooltip from '$lib/components/ChartTooltip.svelte';
 	import { createChartHover } from '$lib/store/chartHover';
+	import { continentColor } from '$lib/helpers/continentColor';
+	import {
+		CONTINENTS,
+		LABEL_COLOR,
+		GDP_DOMAIN,
+		GDP_TICKS,
+		LIFE_EXP_DOMAIN,
+		LIFE_EXP_TICKS,
+		POPULATION_DOMAIN,
+		responsiveChartMargin,
+		xLabelOffset
+	} from '$lib/appConfig/chartConfig';
 
 	let width = $state(800);
 	let height = $state(900);
 
-	let margin = $derived({
-		top: 20,
-		bottom: 120,
-		left: width < 640 ? 20 : 80,
-		right: width < 640 ? 20 : 80
-	});
-	const labelColor = '#55bcd9';
+	let margin = $derived(responsiveChartMargin(width));
+	const labelColor = LABEL_COLOR;
 	let continentFilter: string | null = $state(null);
 
 	let innerHeight = $derived(height - margin.top - margin.bottom);
 	let innerWidth = $derived(width - margin.left - margin.right);
-	let xLableOffset = $derived(width < 640 ? 10 : 40);
+	let xLableOffset = $derived(xLabelOffset(width));
 
 	let data = $derived.by(() => {
 		const countries = year.filteredData?.countries || [];
@@ -31,18 +39,15 @@
 		return countries.filter((country) => country.continent.toLowerCase() === continentFilter);
 	});
 
-	const continents = ['americas', 'europe', 'asia', 'africa'];
+	const continents = CONTINENTS;
 
-	const yTicks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90];
-	const xTicks = [140, 400, 4000, 40000, 170000];
-	const populationDomain = [2000, 1400000000];
+	const yTicks = LIFE_EXP_TICKS;
+	const xTicks = GDP_TICKS;
 
-	let xScale = $derived(d3.scaleLog().base(10).domain([140, 170000]).range([0, innerWidth]));
-	let yScale = $derived(d3.scaleLinear().domain([0, 90]).range([innerHeight, 0]));
+	let xScale = $derived(d3.scaleLog().base(10).domain(GDP_DOMAIN).range([0, innerWidth]));
+	let yScale = $derived(d3.scaleLinear().domain(LIFE_EXP_DOMAIN).range([innerHeight, 0]));
 
-	let colors = $derived(d3.scaleOrdinal<string>().domain(continents).range(d3.schemeSet2));
-
-	let area = $derived(d3.scaleSqrt().domain(populationDomain).range([50, 2500]));
+	let area = $derived(d3.scaleSqrt().domain(POPULATION_DOMAIN).range([50, 2500]));
 
 	const filterContinent = (continent: string) => {
 		continentFilter = continent;
@@ -84,20 +89,13 @@
 >
 	<svg {width} {height}>
 		<g transform="translate({margin.left}, {margin.top})">
-			<text
-				x={innerWidth / 2}
-				y={(innerHeight * 2) / 3}
-				text-anchor="middle"
-				class="opacity-50"
-				stroke="lightgray"
-				style="font-size: {innerWidth / 3}; fill: lightgray">{year.value}</text
-			>
+			<YearWatermark year={year.value} {innerWidth} {innerHeight} />
 			{#if data}
 				{#each data as row, index}
 					{#if row['life_exp'] && row.income}
 						<circle
 							cy={yScale(row['life_exp'])}
-							fill={colors(row.continent)}
+							fill={continentColor(row.continent)}
 							r={Math.sqrt(area(row.population) / Math.PI)}
 							cx={xScale(row.income)}
 							onmouseover={() => handleChartHover(row)}
@@ -129,13 +127,7 @@
 	</svg>
 </div>
 
-{#if hoveredData && $hoveredData}
-	<Tooltip
-		data={$hoveredData}
-		xPosition={$mousePointWithMarginOffset.x}
-		yPosition={$mousePointWithMarginOffset.y}
-	/>
-{/if}
+<ChartTooltip {hoveredData} {mousePointWithMarginOffset} />
 
 <style>
 	.yMeasure {

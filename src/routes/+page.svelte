@@ -2,6 +2,8 @@
 	import { year } from './state.svelte';
 	import type { NumericCountryKey } from '$lib/appConfig/types';
 	import { hasNumericValue } from '$lib/helpers/typeGuard';
+	import { continentColor } from '$lib/helpers/continentColor';
+	import { GDP_LOG_DOMAIN, LIFE_EXP_DOMAIN, POPULATION_DOMAIN } from '$lib/appConfig/chartConfig';
 	import * as d3 from 'd3';
 	import { writable } from 'svelte/store';
 
@@ -13,9 +15,19 @@
 	};
 
 	const metrics: Metric[] = [
-		{ label: 'GDP', key: 'income', max: 150_000, format: (v) => `$${d3.format(',')(v)}` },
-		{ label: 'Life Expectancy', key: 'life_exp', max: 90, format: (v) => `${v} yrs` },
-		{ label: 'Population', key: 'population', max: 1_400_000_000, format: (v) => d3.format(',')(v) }
+		{ label: 'GDP', key: 'income', max: GDP_LOG_DOMAIN[1], format: (v) => `$${d3.format(',')(v)}` },
+		{
+			label: 'Life Expectancy',
+			key: 'life_exp',
+			max: LIFE_EXP_DOMAIN[1],
+			format: (v) => `${v} yrs`
+		},
+		{
+			label: 'Population',
+			key: 'population',
+			max: POPULATION_DOMAIN[1],
+			format: (v) => d3.format(',')(v)
+		}
 	];
 
 	let sortKey = $state<NumericCountryKey>('population');
@@ -30,11 +42,6 @@
 				sortDir === 'desc' ? b[sortKey]! - a[sortKey]! : a[sortKey]! - b[sortKey]!
 			) ?? []
 	);
-
-	const color = d3
-		.scaleOrdinal<string>()
-		.domain(['americas', 'europe', 'asia', 'africa'])
-		.range(d3.schemeSet2);
 
 	const toggleSort = (key: NumericCountryKey) => {
 		if (sortKey === key) {
@@ -74,7 +81,7 @@
 						<div class="relative h-3 w-full min-w-0 flex-1 rounded bg-base-200">
 							<div
 								class="absolute inset-y-0 rounded transition-all duration-200"
-								style="width: {(row[m.key]! / m.max) * 100}%; background-color: {color(
+								style="width: {(row[m.key]! / m.max) * 100}%; background-color: {continentColor(
 									row.continent
 								)}"
 							></div>
@@ -116,9 +123,8 @@
 									<div class="relative h-3 w-full max-w-[120px] rounded bg-base-200">
 										<div
 											class="absolute inset-y-0 rounded transition-all duration-200"
-											style="width: {(row[m.key]! / m.max) * 100}%; background-color: {color(
-												row.continent
-											)}"
+											style="width: {(row[m.key]! / m.max) *
+												100}%; background-color: {continentColor(row.continent)}"
 										></div>
 									</div>
 									<span class="text-xs">{m.format(row[m.key]!)}</span>
