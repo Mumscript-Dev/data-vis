@@ -4,7 +4,7 @@
 	import type { Feature, Geometry } from 'geojson';
 	import type { Country } from '$lib/appConfig/types';
 	import { year } from '../state.svelte';
-	import Tooltip from '$lib/components/Tooltip.svelte';
+	import ChartTooltip from '$lib/components/ChartTooltip.svelte';
 	import type { GeoPath, GeoPermissibleObjects } from 'd3-geo';
 	import { createChartHover } from '$lib/store/chartHover'; // <- reusable hover module
 
@@ -137,10 +137,4 @@
 	</svg>
 </div>
 
-{#if hoveredData && $hoveredData}
-	<Tooltip
-		data={$hoveredData}
-		xPosition={$mousePointWithMarginOffset.x}
-		yPosition={$mousePointWithMarginOffset.y}
-	/>
-{/if}
+<ChartTooltip {hoveredData} {mousePointWithMarginOffset} />
