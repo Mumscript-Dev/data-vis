@@ -1,5 +1,7 @@
 <script lang="ts">
-	export let yScale: any;
+	import type { ScaleContinuousNumeric } from 'd3-scale';
+
+	export let yScale: ScaleContinuousNumeric<number, number>;
 	export let innerHeight: number;
 	export let yTicks: number[];
 	export let labelColor: string;

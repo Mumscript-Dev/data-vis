@@ -1,7 +1,7 @@
 import data from '$lib/data/data.json';
 import { type EntryData } from '$lib/appConfig/types';
 
-class YearState {
+export class YearState {
 	value = $state(1800);
 	filteredData = $derived(
 		(data as EntryData[]).find((row: EntryData) => row.year === this.value.toString())

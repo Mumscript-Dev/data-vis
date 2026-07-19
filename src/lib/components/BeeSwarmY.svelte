@@ -1,5 +1,7 @@
 <script lang="ts">
-	export let yScale: any;
+	import type { ScaleBand } from 'd3-scale';
+
+	export let yScale: ScaleBand<string>;
 	export let innerHeight: number;
 	export let continents: string[];
 	export let labelColor: string;

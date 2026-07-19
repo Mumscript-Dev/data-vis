@@ -1,21 +1,22 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import data from '$lib/data/data.json';
-	import { year } from './state.svelte';
+	import { year, YearState } from './state.svelte';
+	import type { EntryData } from '$lib/appConfig/types';
+
 	type ChildProps = {
-		year: number;
-		filteredData: any;
+		year: YearState;
+		filteredData: EntryData | undefined;
 	};
 
-	let { children } = $props<{
-		children: (props: ChildProps) => any;
-	}>();
+	let { children }: { children: Snippet<[ChildProps]> } = $props();
 
-	let years = $derived(data.map((row: any) => parseInt(row.year)));
-	let filteredData = $derived(data.find((row: any) => row.year === year.toString()));
+	let years = $derived((data as EntryData[]).map((row) => parseInt(row.year)));
+	let filteredData = $derived((data as EntryData[]).find((row) => row.year === year.toString()));
 
-	let interval: any;
+	let interval: ReturnType<typeof setInterval> | undefined;
 	let isRunning = false;
 	let drawerOpen = $state(false);
 

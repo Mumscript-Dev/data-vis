@@ -3,24 +3,14 @@ import type { PageServerLoad } from './$types';
 import world from '$lib/data/world';
 import { feature } from 'topojson-client';
 import type { Feature, Geometry, FeatureCollection } from 'geojson';
-import type { Topology, GeometryCollection } from 'topojson-specification';
-
-type CountryProps = {
-	name: string;
-	color?: string;
-};
-
-const topology = world as unknown as Topology<{
-	countries: GeometryCollection<CountryProps>;
-}>;
+import type { CountryGeoProperties } from '$lib/appConfig/types';
 
 export const load: PageServerLoad = async () => {
-	const geo: Feature<Geometry, CountryProps> | FeatureCollection<Geometry, CountryProps> = feature(
-		topology,
-		topology.objects.countries
-	);
+	const geo:
+		| Feature<Geometry, CountryGeoProperties>
+		| FeatureCollection<Geometry, CountryGeoProperties> = feature(world, world.objects.countries);
 
-	const countriesGeo: Feature<Geometry, CountryProps>[] =
+	const countriesGeo: Feature<Geometry, CountryGeoProperties>[] =
 		geo.type === 'FeatureCollection' ? geo.features : [geo];
 
 	return { countriesGeo };

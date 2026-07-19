@@ -2,7 +2,7 @@
 	import * as d3 from 'd3';
 	import { onMount } from 'svelte';
 	import type { Feature, Geometry } from 'geojson';
-	import type { Country } from '$lib/appConfig/types';
+	import type { Country, CountryGeoProperties } from '$lib/appConfig/types';
 	import { year } from '../state.svelte';
 	import ChartTooltip from '$lib/components/ChartTooltip.svelte';
 	import type { GeoPath, GeoPermissibleObjects } from 'd3-geo';
@@ -10,7 +10,7 @@
 
 	const { data } = $props<{
 		data: {
-			countriesGeo: Feature<Geometry, { name: string; color?: string }>[];
+			countriesGeo: Feature<Geometry, CountryGeoProperties>[];
 		};
 	}>();
 
@@ -20,7 +20,7 @@
 	let rotation = $state(0);
 	let isDragging = $state(false);
 	let degreePerFrame = 0.4;
-	let globe: any;
+	let globe: SVGSVGElement;
 
 	let innerHeight = $derived(height - margin.top - margin.bottom - 30);
 	let innerWidth = $derived(width - margin.left - margin.right);
@@ -44,7 +44,7 @@
 		const myGlobe = d3.select(globe);
 		myGlobe.call(
 			d3
-				.drag()
+				.drag<SVGSVGElement, unknown>()
 				.on('drag', (event) => {
 					isDragging = true;
 					rotation = rotation + event.dx * dragSensitivity;
